@@ -1,0 +1,29 @@
+{
+  "company": "주식회사 메이드메이트",
+  "footer": "주식회사 메이드메이트",
+  "use": "OEM/ODM·중국 소싱 — 바이어 제안서·생산 보고",
+  "status": "미확인 — 실제 CI(로고·대표색) 확인 후 colors 교체",
+  "fonts": {
+    "heading": "Pretendard",
+    "body": "Pretendard"
+  },
+  "colors": {
+    "primary": "142A4D",
+    "accent": "E8833A",
+    "background": "FFFFFF",
+    "surface": "F3F5F8",
+    "text": "1E2329",
+    "muted": "6B7280",
+    "line": "D9DEE5",
+    "on_primary_muted": "C9D3E3",
+    "highlight_bg": "FFF4E8",
+    "warning": "D92D20",
+    "chart": [
+      "142A4D",
+      "E8833A",
+      "7C8DA6",
+      "B8C2D1"
+    ],
+    "chart_muted": "C5CCD6"
+  }
+}
