@@ -33,9 +33,30 @@ SIZES = {
     "A4-portrait": (Emu(7560000), Emu(10692000)),   # 210 x 297 mm
 }
 
-LIMITS = {"title": 40, "bullets": 3, "bullet_len": 60, "kpi": 4, "steps": 5, "table_rows": 8}
+LIMITS = {"title": 40, "bullets": 4, "bullet_len": 40, "kpi": 4, "steps": 5, "table_rows": 8}
+DARK_TYPES = {"cover", "closing"}  # 어두운 배경은 표지·마무리만
 
 warnings, checks = [], []
+
+
+def split_keyword(line):
+    """'키워드: 내용' → ('키워드', '내용'). 형식이 아니면 (None, line)."""
+    s = str(line)
+    if ": " in s:
+        k, v = s.split(": ", 1)
+        if 0 < len(k) <= 15:
+            return k, v
+    return None, s
+
+
+def lint_sequence(spec):
+    """슬라이드 순서 규칙 점검 — 같은 레이아웃 연속 사용 금지 (간지 제외)."""
+    prev = None
+    for i, d in enumerate(spec["slides"], start=1):
+        t = d["type"]
+        if t == prev and t not in ("section",):
+            warnings.append(f"p{i} '{t}' 레이아웃이 직전 장과 같음 — 연속 사용 금지")
+        prev = t
 
 
 def rgb(hex_str):
@@ -99,12 +120,17 @@ class Deck:
             p.line_spacing = spacing
             if bullet:
                 p.space_after = Pt(size * 0.6)
-            run = p.add_run()
-            run.text = ("•  " if bullet else "") + str(line)
             col = color
             if CHECK_TAG in str(line):
                 col = self.c["warning"]
                 checks.append(f"p{self.page} {where}: {line}")
+            key, rest = split_keyword(line) if bullet else (None, str(line))
+            if key:  # '키워드: 내용' → 키워드만 굵게
+                r1 = p.add_run()
+                r1.text = f"•  {key}  "
+                self._set_font(r1, size, self.c["primary"] if col == color else col, True, heading)
+            run = p.add_run()
+            run.text = ("" if key else ("•  " if bullet else "")) + rest
             self._set_font(run, size, col, bold, heading)
         return box
 
@@ -170,12 +196,13 @@ class Deck:
             s.notes_slide.notes_text_frame.text = d["notes"]
 
     def section(self, d):
-        s = self.new_slide(self.c["primary"])
+        s = self.new_slide(self.c["surface"])  # 간지도 밝은 배경 (어두운 배경은 표지·마무리만)
         M, W, H = self.M, self.W, self.H
-        self.text(s, M, int(H * 0.36), W - 2 * M, int(H * 0.12), d.get("no", ""), size=54, bold=True,
+        self.text(s, M, int(H * 0.3), W - 2 * M, int(H * 0.2), d.get("no", ""), size=72, bold=True,
                   heading=True, color=self.c["accent"])
-        self.text(s, M, int(H * 0.5), W - 2 * M, int(H * 0.12), d["title"], size=32, bold=True,
-                  heading=True, color="FFFFFF", where="section")
+        self.rect(s, M, int(H * 0.52), Inches(0.9), Emu(57150), self.c["primary"])
+        self.text(s, M, int(H * 0.56), W - 2 * M, int(H * 0.12), d["title"], size=32, bold=True,
+                  heading=True, color=self.c["primary"], where="section")
 
     def agenda(self, d):
         s = self.new_slide()
@@ -413,6 +440,7 @@ class Deck:
                       color=self.c["on_primary_muted"], spacing=1.4, where="closing")
 
     def build(self, out):
+        lint_sequence(self.spec)
         for d in self.spec["slides"]:
             getattr(self, d["type"])(d)
         self.prs.save(out)

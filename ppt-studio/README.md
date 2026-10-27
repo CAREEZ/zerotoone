@@ -1,6 +1,6 @@
 # PPT 스튜디오
 
-PPT 제작 전용 프로젝트. **세팅을 먼저 고정하고(디자인 시스템·지침·수정 기록), 단계별로 만든다**는 원칙으로 구성함.
+PPT 제작 전용 프로젝트. **세팅을 먼저 고정하고(디자인 시스템·지침·수정 기록), 단계별로 만든다.** 하나의 원고(spec)에서 보고·제출용 **PPTX**와 현장 발표용 **HTML 모션 슬라이드**를 함께 만든다.
 
 ## 바로 쓰는 법
 | 상황 | 할 일 |
@@ -9,6 +9,7 @@ PPT 제작 전용 프로젝트. **세팅을 먼저 고정하고(디자인 시스
 | Claude Code(이 저장소)에서 쓰기 | "PPT 만들어줘" + 자료 첨부 → `ppt-studio` 스킬과 `CLAUDE.md`가 자동 적용 |
 | 어떤 프롬프트를 쓸지 | `prompts/프롬프트팩.md` 0단계부터 |
 | 왜 이렇게 하는지 | `docs/01_영상분석.md` |
+| HTML 샘플 보기 | `examples/sample-ir.html`을 브라우저로 열기 → →키 넘김, F 전체화면, E 편집, Ctrl+S 저장 |
 
 ## 구성
 ```
@@ -24,7 +25,10 @@ ppt-studio/
 ├─ lessons-log.md                수정 기록 누적
 ├─ tools/build_deck.py           spec.json → 편집 가능한 .pptx (네이티브 차트·표)
 ├─ tools/render.sh               .pptx → PDF·PNG (검수용)
-├─ examples/sample-ir.json       전 레이아웃 예시 (가상 데이터)
+├─ tools/build_html.py           spec.json → 폰트 내장 HTML 모션 슬라이드 (브라우저 편집·저장)
+├─ tools/export_html.js          .html → PDF·PNG (검수용)
+├─ assets/fonts/                 Pretendard 웹폰트 서브셋 (OFL)
+├─ examples/sample-ir.*          전 레이아웃 예시 spec·pptx·html·pdf (가상 데이터)
 └─ projects/                     덱별 작업 폴더
 ```
 스킬: 저장소 루트 `.claude/skills/ppt-studio/SKILL.md`
@@ -32,5 +36,5 @@ ppt-studio/
 ## 남은 확인 사항
 - [ ] 법인별 로고 파일, CI 색상(HEX) — 받기 전까지 4개 법인 모두 중립 네이비·오렌지 임시값
 - [ ] 커리즈 법인 형태 표기
-- [ ] 영상 ① `byShnblO4Oc` 내용, 영상 ② 자막·댓글 원문 — 작업 환경에서 YouTube 접속 차단으로 미확보
+- [ ] 영상 ①·② 자막·댓글 원문 대조 — 현재는 사용자 제공 분석과 2차 자료 기준 (작업 환경에서 YouTube 접속 차단)
 - [ ] 레퍼런스로 삼을 잘 만든 덱 2~3개
